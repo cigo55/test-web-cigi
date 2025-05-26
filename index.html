@@ -1,46 +1,33 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dotační AI poradce</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 30px; }
-    textarea { width: 100%; height: 100px; }
-    button { padding: 10px 20px; margin-top: 10px; font-size: 16px; }
-    #answer { margin-top: 20px; padding: 10px; background: #f0f0f0; white-space: pre-wrap; }
-  </style>
 </head>
 <body>
   <h1>Dotační AI poradce</h1>
-  <p>Zeptejte se na cokoli ohledně dotací, výzev nebo veřejných zakázek:</p>
-  <textarea id="question" placeholder="Zadejte svůj dotaz..."></textarea><br>
-  <button onclick="ask()">Odeslat dotaz</button>
-  <div id="answer"></div>
+  <p>Zeptejte se na cokoliv ohledně dotací, výzev nebo veřejných zakázek:</p>
+  <textarea id="question" rows="4" cols="50" placeholder="Zadejte svůj dotaz..."></textarea><br />
+  <button onclick="askQuestion()">Odeslat dotaz</button>
+  <div id="answer" style="margin-top: 20px;"></div>
 
   <script>
-    async function ask() {
+    async function askQuestion() {
       const question = document.getElementById("question").value;
       const answerBox = document.getElementById("answer");
-      answerBox.innerText = "Zpracovávám odpověď...";
+      answerBox.innerText = "⏳ Načítám odpověď...";
 
       try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        const response = await fetch("/api/chat", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer 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"
-          },
-          body: JSON.stringify({
-            model: "gpt-4",
-            messages: [{ role: "user", content: question }],
-            temperature: 0.5
-          })
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question })
         });
 
         const data = await response.json();
-        answerBox.innerText = data.choices?.[0]?.message?.content || "Nepodařilo se načíst odpověď.";
+        answerBox.innerText = data.answer || "❌ Nepodařilo se načíst odpověď.";
       } catch (error) {
-        answerBox.innerText = "Chyba při komunikaci s OpenAI.";
+        answerBox.innerText = "❌ Chyba při komunikaci se serverem.";
         console.error(error);
       }
     }
