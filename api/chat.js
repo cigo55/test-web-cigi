@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // LOGUJEME ODEZVU do konzole (Vercel → Logs)
+    // Výpis odpovědi do logu na Vercelu
     console.log("OpenAI odpověď:", JSON.stringify(data, null, 2));
 
     if (data.error) {
